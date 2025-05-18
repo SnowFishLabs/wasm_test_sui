@@ -5,6 +5,7 @@ this is test repo for `deepmove` wasm move vm
 * install `deepmove` command line tools with `npm install -g @deepmove/deep`
 * git clone this repo
 * open your terminal and cd to this repo
+* type `npm install` to install dependencies
 * type `deepmove -c sui` to enter `deepmove` command env
 * type `move build --test` to build move projects
 * type `gen test` to generate typescript bindings
