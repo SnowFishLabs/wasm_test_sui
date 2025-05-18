@@ -15,6 +15,7 @@ module wasm_test::wasm_test {
         url: String,
     }
 
+    #[allow(unused_field)]
     public struct MyObject has key {
         id: UID,
         name: String,
@@ -27,6 +28,7 @@ module wasm_test::wasm_test {
         urls: vector<MyUrl>
     }
 
+    #[allow(unused_field)]
     public struct MyStructT<T, phantom T1> {
         id: u8,
         name: String,
@@ -42,6 +44,7 @@ module wasm_test::wasm_test {
         `for`: T,
     }
 
+    #[allow(unused_field)]
     public struct Foo2<T0, T1> {
         num1: u16,
         x: T0,
@@ -153,7 +156,7 @@ module wasm_test::wasm_test {
     //     agent
     // }
 
-    fun get_sui_url(): Url {
+    public fun get_sui_url(): Url {
         url::new_unsafe_from_bytes(b"www.baidu.com")
     }
 
@@ -185,17 +188,18 @@ module wasm_test::wasm_test {
     }
 
     public fun set_foo7<T0, T1>(a: &mut Foo2<T0, T1>){
-        a.num1 = 100
+        a.num1 = 100;
+        a.num3 = true;
     }
 
     public fun set_foo8<T0, T1>(a: &mut vector<Foo2<T0, T1>>){
-        a[0].num1 = 100
+        a[0].num1 = 100;
     }
 
     public fun use_const(): u64 {
-        let a = EInvalidASCIICharacter;
+        let _a = EInvalidASCIICharacter;
         let mut b: u64 = 100;
-        let c = EInvalidASCIICharacte2r;
+        let _c = EInvalidASCIICharacte2r;
         let (_, _, r, _, u) = get_vec();
         std::debug::print(&u);
         let s = get_struct();
@@ -211,11 +215,11 @@ module wasm_test::wasm_test {
     }
 
     entry fun set_entry() {
-        let a = EInvalidASCIICharacter;
+        let _a = EInvalidASCIICharacter;
         use_const();
     }
 
-    fun set_entry2(): u64 {
+    public fun set_entry2(): u64 {
         let a = use_const();
         if (a > 0) {
             a + 1
@@ -224,46 +228,20 @@ module wasm_test::wasm_test {
         }
     }
 
-    fun loop2() {
+    public fun loop2() {
         let mut i: u128 = 1;
         while (true) {
-            let a = use_const();
+            let _a = use_const();
             // let b = a + 1;
             // if (b > 10000) {
             //     return
             // }
             i = i + 1;
             if (i > 100) {
-                break;
+                break
             } else {
-                continue;
+                continue
             }
         }
-    }
-
-    public struct S { f: u64 }
-
-    public fun new(): S {
-        S { f: 10 }
-    }
-
-    // should complain
-    public fun leak_f(s: &mut S): &mut u64 {
-        &mut s.f
-    }
-
-    fun get_u8(): u8 {
-        0xFF
-    }
-
-    public fun overflow(): u8 {
-        let mut a: u8 = 0xFF;
-        a = a - 2;
-        a + 3
-    }
-
-    fun precision_loss(a: u16, b: u16): u16 {
-        let minimum_alive = (a / (a+10)) * (b * 100);
-        minimum_alive
     }
 }

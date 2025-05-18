@@ -936,98 +936,6 @@ export class SetStringEvent implements StructClass {
     };
 }
 
-/* ============================== S =============================== */
-
-export class S implements StructClass {
-    $type: string = `${do_get_package_address()}::${MODULE_NAME}::S`;
-
-    f: u64_import;
-
-    constructor(f: u64_import) {
-        this.f = f;
-    }
-
-    into_value() {
-        return this.get_value()
-    }
-
-    from_bcs_vector_t(bytes: Uint8Array) {
-        let args = this.from_bcs_vector(bcs_import.vector(this.get_bcs()).parse(bytes));
-        var self = this;
-        return args.map(function(arg) {
-            arg.$type = self.$type;
-            return arg;
-        })
-    }
-
-    from_bcs_t(bytes: Uint8Array) {
-        let result = this.from_bcs(this.get_bcs().parse(bytes));
-        result.$type = this.$type;
-        return result;
-    }
-
-    serialize(arg: any) {
-        return this.get_bcs().serialize(arg);
-    }
-
-    serialize_bcs() {
-        return this.get_bcs()
-    }
-
-    return_bcs() {
-        return this.get_bcs()
-    }
-
-    from_bcs(arg: any) {
-        return S.from_bcs(arg)
-    }
-
-    from_bcs_vector(args: any) {
-        return S.from_bcs_vector(args)
-    }
-
-    get_bcs() {
-        return S.bcs
-    }
-
-    get_value() {
-        return this
-    }
-
-    static $type() {
-        return `${do_get_package_address()}::${MODULE_NAME}::S`
-    }
-
-    from(arg: S) {
-        this.f = arg.f;
-    }
-
-    static from_bcs(arg: {
-        f: u64_import
-    }): S {
-        return new S(arg.f)
-    }
-
-    static from_bcs_vector(args: {
-        f: u64_import
-    } []): S[] {
-        return args.map(function(arg) {
-            return new S(arg.f)
-        })
-    }
-
-    static get bcs() {
-        return bcs_import.struct("S", {
-            f: bcs_import.u64(),
-        }).transform({
-            input: (val: any) => {
-                return val
-            },
-            output: (val) => new S(val.f),
-        });
-    };
-}
-
 function unit_test_poison() {
     let wasm = get_wasm();
 
@@ -1035,18 +943,6 @@ function unit_test_poison() {
 
     wasm.call_return_bcs(PACKAGE_ADDRESS, MODULE_NAME, "unit_test_poison", [], args);
 
-}
-
-function new_(): [S] {
-    let wasm = get_wasm();
-
-    let args: any[] = []
-
-    let [r0] = wasm.call_return_bcs(PACKAGE_ADDRESS, MODULE_NAME, "new", [], args);
-
-    return [
-        S.from_bcs(S.bcs.parse(new Uint8Array(r0.Raw[0])))
-    ];
 }
 
 function get(): [number] {
@@ -1448,61 +1344,6 @@ function loop2() {
 
 }
 
-function leak_f(arg0: S): [u64_import] {
-    let wasm = get_wasm();
-
-    let args: any[] = [
-        wasm.new_bytes(S.bcs.serialize(arg0).toBytes(), "")
-    ]
-
-    let [r0, a0] = wasm.call_return_bcs(PACKAGE_ADDRESS, MODULE_NAME, "leak_f", [], args);
-
-    arg0.from(arg0.from_bcs_t(new Uint8Array(a0.Raw[0])));
-
-    return [
-        bcs_import.u64().parse(new Uint8Array(r0.Raw[0]))
-    ];
-}
-
-function get_u8(): [number] {
-    let wasm = get_wasm();
-
-    let args: any[] = []
-
-    let [r0] = wasm.call_return_bcs(PACKAGE_ADDRESS, MODULE_NAME, "get_u8", [], args);
-
-    return [
-        bcs_import.u8().parse(new Uint8Array(r0.Raw[0]))
-    ];
-}
-
-function overflow(): [number] {
-    let wasm = get_wasm();
-
-    let args: any[] = []
-
-    let [r0] = wasm.call_return_bcs(PACKAGE_ADDRESS, MODULE_NAME, "overflow", [], args);
-
-    return [
-        bcs_import.u8().parse(new Uint8Array(r0.Raw[0]))
-    ];
-}
-
-function precision_loss(arg0: number, arg1: number): [number] {
-    let wasm = get_wasm();
-
-    let args: any[] = [
-        wasm.new_bytes(bcs_import.u16().serialize(arg0).toBytes(), ""),
-        wasm.new_bytes(bcs_import.u16().serialize(arg1).toBytes(), "")
-    ]
-
-    let [r0] = wasm.call_return_bcs(PACKAGE_ADDRESS, MODULE_NAME, "precision_loss", [], args);
-
-    return [
-        bcs_import.u16().parse(new Uint8Array(r0.Raw[0]))
-    ];
-}
-
 export const wasm_test = {
     MyUrl,
     MyObject,
@@ -1512,9 +1353,7 @@ export const wasm_test = {
     Foo,
     Foo2,
     SetStringEvent,
-    S,
     unit_test_poison,
-    new_,
     get,
     get_vec,
     get_str,
@@ -1545,9 +1384,5 @@ export const wasm_test = {
     aaa,
     set_entry,
     set_entry2,
-    loop2,
-    leak_f,
-    get_u8,
-    overflow,
-    precision_loss
+    loop2
 }

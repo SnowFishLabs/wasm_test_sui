@@ -6,7 +6,7 @@ this is test repo for `deepmove` wasm move vm
 * git clone this repo
 * open your terminal and cd to this repo
 * type `deepmove -c sui` to enter `deepmove` command env
-* type `move build` to build move projects
+* type `move build --test` to build move projects
 * type `gen test` to generate typescript bindings
 * type `test` to run typescript unit test
 
